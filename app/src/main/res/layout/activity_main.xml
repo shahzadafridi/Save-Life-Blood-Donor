@@ -4,57 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".Screens.MainActivity">
 
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/splash_logo"
-            android:layout_width="218dp"
-            android:layout_height="274dp"
-            android:layout_marginBottom="30dp"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:background="@drawable/splash_scrn_logo" />
-
-    </FrameLayout>
-
-    <RelativeLayout
-        android:id="@+id/arc_layout"
+    <Button
+        android:id="@+id/main_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/red_btn_bg"
+        android:text="Search"
+        android:textColor="#fff"
+        android:textSize="18dp"
+        android:textStyle="normal" />
 
-        <ImageView
-            android:id="@+id/splash_scr_arc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/splash_scrn_arc_bg" />
 
-        <TextView
-            android:id="@+id/splash_arc_title"
-            android:gravity="center_horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="120dp"
-            android:textColor="#fff"
-            android:text="Save Life - Blood Donor"
-            android:textSize="18dp"
-            android:textStyle="bold"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bottom_arc" />
 
-        <TextView
-            android:gravity="center_horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/splash_arc_title"
-            android:textColor="#F2FFFFFF"
-            android:padding="16dp"
-            android:text="The Save Life - Blood Donor App puts the power to save lives in the palm of your hand. Donating blood, platelets and AB Plasma is easier than ever. Find nearby Red Cross blood and create or join a lifesaving team and track its impact on a national leaderboard"
-            android:textSize="16dp"
-            android:textStyle="normal"/>
+    <TextView
+        android:id="@+id/main_bottom_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_horizontal"
+        android:text="Save Life - Blood Donor"
+        android:textColor="#fff"
+        android:textSize="18dp"
+        android:textStyle="bold" />
 
-    </RelativeLayout>
 
 </RelativeLayout>

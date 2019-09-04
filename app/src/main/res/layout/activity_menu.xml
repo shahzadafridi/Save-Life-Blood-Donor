@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Screens.MenuActivity">
+
+    <ImageView
+        android:id="@+id/hands_logo"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:background="@drawable/arc_bg" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:background="@drawable/hands_logo" />
+
+
+    <TextView
+        android:id="@+id/menu_central_empty_view"
+        android:layout_centerVertical="true"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/menu_central_empty_view"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/menu_nearby_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/red_btn_bg"
+            android:textAllCaps="false"
+            android:text="Nearby Location"
+            android:textColor="#fff"
+            android:textSize="18dp"
+            android:textStyle="normal" />
+
+        <Button
+            android:id="@+id/menu_blood_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/red_btn_bg"
+            android:textAllCaps="false"
+            android:text="Blood Group"
+            android:textColor="#fff"
+            android:textSize="18dp"
+            android:textStyle="normal" />
+
+        <Button
+            android:id="@+id/menu_nearby_bloodbank"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/red_btn_bg"
+            android:textAllCaps="false"
+            android:text="Nearby Blood Bank"
+            android:textColor="#fff"
+            android:textSize="18dp"
+            android:textStyle="normal" />
+
+    </LinearLayout>
+
+</RelativeLayout>
