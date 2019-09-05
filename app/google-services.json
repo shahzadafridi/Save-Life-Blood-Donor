@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "379082430228",
+    "firebase_url": "https://savelifeblooddonor.firebaseio.com",
+    "project_id": "savelifeblooddonor",
+    "storage_bucket": "savelifeblooddonor.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:379082430228:android:baf5297cacbc22051e1401",
+        "android_client_info": {
+          "package_name": "official.com.savelife_blooddonor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "379082430228-2bn1u5478v08kh6n401f1ut5utf8nms5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "official.com.savelife_blooddonor",
+            "certificate_hash": "786bba8bc29f83935ccce66508fdc9bf2bcd7f91"
+          }
+        },
+        {
+          "client_id": "379082430228-gpj08t25tu06bmf0mo1hblm7brv1h9pn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCb-AiADj0p9Pya1xcMIZRM6AJP59KbLvw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "379082430228-gpj08t25tu06bmf0mo1hblm7brv1h9pn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -5,14 +5,14 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/light_red</item>
         <item name="colorPrimaryDark">@color/light_red</item>
-        <item name="colorAccent">@color/light_gray</item>
+        <item name="colorAccent">@color/white</item>
     </style>
 
     <style name="AppTheme2" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/light_red</item>
         <item name="colorPrimaryDark">@color/light_red</item>
-        <item name="colorAccent">@color/light_gray</item>
+        <item name="colorAccent">@color/white</item>
     </style>
 
 </resources>
