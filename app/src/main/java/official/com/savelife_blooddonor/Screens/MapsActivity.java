@@ -87,8 +87,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.e(TAG, "Location permission not granted.");
         }
 
+        if (getIntent() != null){
+            String type = getIntent().getStringExtra("type");
+            if (!TextUtils.isEmpty(type) && type.contentEquals("single_bloodgroup")){
+                String bgroup = getIntent().getStringExtra("bgroup");
+                AppConstants.LoadBloodDonorsByBloodGroup(mMap,bgroup);
+            }
+        }
 
     }
+
 
     LocationCallback mLocationCallBack = new LocationCallback() {
         @Override

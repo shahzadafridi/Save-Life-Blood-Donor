@@ -20,7 +20,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -35,16 +37,20 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import official.com.savelife_blooddonor.Network.IGoogleAPIService;
 import official.com.savelife_blooddonor.Network.Model.MyPlaces;
 import official.com.savelife_blooddonor.Network.Model.Results;
+import official.com.savelife_blooddonor.Screens.DonorRegisterActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -100,72 +106,6 @@ public class AppConstants {
                     }
                 });
 
-    }
-
-    private static String getUrl(Context context, double latitude, double longitude, String placeType) {
-        StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-        googlePlacesUrl.append("location=" + latitude + "," + longitude);
-        googlePlacesUrl.append("&radius=" + 10000);
-        googlePlacesUrl.append("&type=" + placeType);
-        googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=" + context.getResources().getString(R.string.google_maps_key));
-        Log.d("getUrl", googlePlacesUrl.toString());
-        return googlePlacesUrl.toString();
-
-    }
-
-    public static boolean checkLocationPermission(Context context) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(((Activity) context), Manifest.permission.ACCESS_FINE_LOCATION))
-                ActivityCompat.requestPermissions(((Activity) context), new String[]{
-
-                        Manifest.permission.ACCESS_FINE_LOCATION
-
-                }, LOC_PERMISSION_CODE);
-            else
-                ActivityCompat.requestPermissions(((Activity) context), new String[]{Manifest.permission.ACCESS_FINE_LOCATION
-
-                }, LOC_PERMISSION_CODE);
-            return false;
-
-        } else
-            return true;
-
-    }
-
-    public static boolean isValidEmailAddress(String email) {
-        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-        if (email.matches(emailPattern)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static boolean isValidNumberAcceptPtcl(String number) {
-
-        if (TextUtils.isEmpty(number)) {
-            Log.e(TAG, "Enter number");
-            return false;
-        }
-        if (!number.startsWith("0")) {
-            Log.e(TAG, "Enter number which start with 0");
-            return false;
-        }
-        if ((!number.startsWith("03")) && (number.length() < 10)) {
-            Log.e(TAG, "Enter number which start with 03");
-            return false;
-        }
-        if ((number.startsWith("03")) && (number.length() < 11)) {
-            Log.e(TAG, "Enter full number");
-            return false;
-        }
-        if (number.length() < 10) {
-            Log.e(TAG, "Invalid number");
-            return false;
-        }
-        return true;
     }
 
     public static void NearByDonors(GoogleMap mMap, double latitude, double longitude) {
@@ -237,6 +177,101 @@ public class AppConstants {
 
     }
 
+    public static void LoadBloodDonorsByBloodGroup(GoogleMap mMap, String bgroup) {
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference().child("Donor");
+        rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists() && snapshot.getValue() != null) {
+                    for (DataSnapshot snap : snapshot.getChildren()) {
+                        Map snap_info = (Map) snap.getValue();
+                        String str_bgroup = snap_info.get("bgroup").toString();
+                        if (bgroup.contentEquals(str_bgroup)) {
+                            Log.e(TAG,snap.getKey());
+                            Double latitude = Double.parseDouble(snap_info.get("latitude").toString());
+                            Double longtitude = Double.parseDouble(snap_info.get("longtitude").toString());
+                            Marker marker = mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(latitude, longtitude))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.blood_bank))
+                                    .title("Donor"));
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, databaseError.getMessage());
+            }
+        });
+    }
+
+    private static String getUrl(Context context, double latitude, double longitude, String placeType) {
+        StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlacesUrl.append("location=" + latitude + "," + longitude);
+        googlePlacesUrl.append("&radius=" + 10000);
+        googlePlacesUrl.append("&type=" + placeType);
+        googlePlacesUrl.append("&sensor=true");
+        googlePlacesUrl.append("&key=" + context.getResources().getString(R.string.google_maps_key));
+        Log.d("getUrl", googlePlacesUrl.toString());
+        return googlePlacesUrl.toString();
+
+    }
+
+    public static boolean checkLocationPermission(Context context) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(((Activity) context), Manifest.permission.ACCESS_FINE_LOCATION))
+                ActivityCompat.requestPermissions(((Activity) context), new String[]{
+
+                        Manifest.permission.ACCESS_FINE_LOCATION
+
+                }, LOC_PERMISSION_CODE);
+            else
+                ActivityCompat.requestPermissions(((Activity) context), new String[]{Manifest.permission.ACCESS_FINE_LOCATION
+
+                }, LOC_PERMISSION_CODE);
+            return false;
+
+        } else
+            return true;
+
+    }
+
+    public static boolean isValidEmailAddress(String email) {
+        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        if (email.matches(emailPattern)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isValidNumberAcceptPtcl(String number) {
+
+        if (TextUtils.isEmpty(number)) {
+            Log.e(TAG, "Enter number");
+            return false;
+        }
+        if (!number.startsWith("0")) {
+            Log.e(TAG, "Enter number which start with 0");
+            return false;
+        }
+        if ((!number.startsWith("03")) && (number.length() < 10)) {
+            Log.e(TAG, "Enter number which start with 03");
+            return false;
+        }
+        if ((number.startsWith("03")) && (number.length() < 11)) {
+            Log.e(TAG, "Enter full number");
+            return false;
+        }
+        if (number.length() < 10) {
+            Log.e(TAG, "Invalid number");
+            return false;
+        }
+        return true;
+    }
+
     public static void animateMarker(GoogleMap mMap, final Marker marker, final LatLng toPosition, final boolean hideMarker) {
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
@@ -283,4 +318,5 @@ public class AppConstants {
         dialog.setCancelable(cancelable);
         return dialog;
     }
+
 }
