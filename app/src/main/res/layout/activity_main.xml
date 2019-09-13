@@ -6,6 +6,28 @@
     android:layout_height="match_parent"
     tools:context=".Screens.MainActivity">
 
+
+    <ImageButton
+        android:id="@+id/logout"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/logout"/>
+
+    <TextView
+        android:id="@+id/logout_label"
+        android:layout_below="@+id/logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_regular"
+        android:textSize="12dp"
+        android:text="Logout"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="12dp"
+        android:layout_alignParentRight="true"/>
+
     <Button
         android:id="@+id/main_search"
         android:layout_width="match_parent"
@@ -19,6 +41,23 @@
         android:textColor="#fff"
         android:textSize="18dp"
         android:textStyle="normal" />
+
+    <Button
+        android:id="@+id/main_request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_below="@+id/main_search"
+        android:fontFamily="@font/montserrat_bold"
+        android:background="@drawable/red_btn_bg"
+        android:text="Request"
+        android:textColor="#fff"
+        android:textSize="18dp"
+        android:textStyle="normal"
+        android:visibility="gone"/>
 
 
     <ImageView
@@ -36,7 +75,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginBottom="16dp"
         android:gravity="center_horizontal"
-        android:text="Become a blood donor"
+        android:text="Login or Register"
         android:textColor="#fff"
         android:textSize="18dp"
         android:textStyle="bold" />

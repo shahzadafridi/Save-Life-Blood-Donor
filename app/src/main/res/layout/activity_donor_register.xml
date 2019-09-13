@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".Screens.DonorRegisterActivity">
+    tools:context=".Screens.Registration.DonorRegisterActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -76,19 +76,19 @@
                     android:paddingLeft="32dp"
                     android:textSize="18dp" />
 
-                <EditText
-                    android:id="@+id/reg_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginRight="32dp"
-                    android:inputType="textPassword"
-                    android:background="@drawable/gray_btn_bg"
-                    android:gravity="center_vertical"
-                    android:hint="Password"
-                    android:paddingLeft="32dp"
-                    android:textSize="18dp" />
+<!--                <EditText-->
+<!--                    android:id="@+id/reg_password"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="32dp"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:layout_marginRight="32dp"-->
+<!--                    android:inputType="textPassword"-->
+<!--                    android:background="@drawable/gray_btn_bg"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:hint="Password"-->
+<!--                    android:paddingLeft="32dp"-->
+<!--                    android:textSize="18dp" />-->
 
                 <EditText
                     android:id="@+id/reg_phone"
@@ -113,6 +113,7 @@
                     android:layout_marginRight="32dp"
                     android:background="@drawable/gray_btn_bg"
                     android:gravity="center_vertical"
+                    android:inputType="number"
                     android:hint="Age"
                     android:paddingLeft="32dp"
                     android:textSize="18dp" />

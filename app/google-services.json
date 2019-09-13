@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "379082430228-2bn1u5478v08kh6n401f1ut5utf8nms5.apps.googleusercontent.com",
+          "client_id": "379082430228-3ikmj8vcbhvhbrf3d0kb5a676rrl0gff.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "official.com.savelife_blooddonor",
-            "certificate_hash": "786bba8bc29f83935ccce66508fdc9bf2bcd7f91"
+            "certificate_hash": "1f11237566c68761338be48c1d2f330ef55d709e"
           }
         },
         {

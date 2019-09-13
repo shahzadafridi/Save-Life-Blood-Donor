@@ -12,7 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import official.com.savelife_blooddonor.AppConstants;
+import official.com.savelife_blooddonor.Util.AppConstants;
 import official.com.savelife_blooddonor.R;
 
 public class SplashScreen extends AppCompatActivity implements Animation.AnimationListener {

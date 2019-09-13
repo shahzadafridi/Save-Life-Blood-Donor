@@ -79,6 +79,22 @@
             android:textSize="18dp"
             android:textStyle="normal" />
 
+        <Button
+            android:id="@+id/menu_nearby_showRequest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:background="@drawable/red_btn_bg"
+            android:textAllCaps="false"
+            android:text="Show Requests"
+            android:textColor="#fff"
+            android:textSize="18dp"
+            android:textStyle="normal" />
+
     </LinearLayout>
 
 </RelativeLayout>

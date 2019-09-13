@@ -3,6 +3,7 @@ package official.com.savelife_blooddonor.Screens;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
@@ -12,15 +13,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import official.com.savelife_blooddonor.AppConstants;
+
+import com.google.firebase.auth.FirebaseAuth;
+
+import official.com.savelife_blooddonor.Util.AppConstants;
 import official.com.savelife_blooddonor.R;
 
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button nearByLoc, bloodGroup, nearByBBank;
+    Button nearByLoc, bloodGroup, nearByBBank,request;
     Dialog dialog;
     TextView Aplus, Aneg, Bplus, Bneg, Oplus, Oneg, ABplus, ABneg;
     String str_blood_group = "O+"; // default blood group.
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,11 +33,13 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         nearByBBank = (Button) findViewById(R.id.menu_nearby_bloodbank);
         bloodGroup = (Button) findViewById(R.id.menu_blood_group);
         nearByLoc = (Button) findViewById(R.id.menu_nearby_location);
+        request = (Button) findViewById(R.id.menu_nearby_showRequest);
         nearByBBank.setOnClickListener(this);
         bloodGroup.setOnClickListener(this);
         nearByLoc.setOnClickListener(this);
+        request.setOnClickListener(this);
 
-        dialog =  AppConstants.onCreateDialog(MenuActivity.this,R.layout.blood_group_dialog,true);
+        dialog = AppConstants.onCreateDialog(MenuActivity.this, R.layout.blood_group_dialog, true);
         Aplus = (TextView) dialog.findViewById(R.id.dialog_aplus_tv);
         Aneg = (TextView) dialog.findViewById(R.id.dialog_anegtive_tv);
         Bplus = (TextView) dialog.findViewById(R.id.dialog_bplus_tv);
@@ -49,65 +56,76 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         Oneg.setOnClickListener(this);
         ABplus.setOnClickListener(this);
         ABneg.setOnClickListener(this);
+
+        String getRole = AppConstants.getRole(this,"SESSION");
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            if (getRole.contentEquals("donor")) {
+                request.setVisibility(View.VISIBLE);
+            }else {
+                request.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.menu_nearby_bloodbank) {
-
-            if (AppConstants.checkLocationPermission(MenuActivity.this)) {
-                goToNextActivity("nearby_bloodbank","");
-            } else {
-                Toast.makeText(this, "Permissions needed to shows nearby blood bank.", Toast.LENGTH_SHORT).show();
-            }
+            goToNextActivity("nearby_bloodbank", "");
         } else if (view.getId() == R.id.menu_nearby_location) {
-            goToNextActivity("nearby_donor","");
+            goToNextActivity("nearby_donor", "");
         } else if (view.getId() == R.id.menu_blood_group) {
             dialog.show();
-        }else if (view.getId() == R.id.dialog_aplus_tv){
+        } else if (view.getId() == R.id.dialog_aplus_tv) {
             str_blood_group = "A+";
-            goToNextActivity("single_bloodgroup","A+");
+            goToNextActivity("single_bloodgroup", "A+");
             setSelectedBackground(str_blood_group);
-        }else if (view.getId() == R.id.dialog_anegtive_tv){
+        } else if (view.getId() == R.id.dialog_anegtive_tv) {
             str_blood_group = "A-";
-            goToNextActivity("single_bloodgroup","A-");
+            goToNextActivity("single_bloodgroup", "A-");
             setSelectedBackground(str_blood_group);
-        }else if (view.getId() == R.id.dialog_bplus_tv){
+        } else if (view.getId() == R.id.dialog_bplus_tv) {
             str_blood_group = "B+";
-            goToNextActivity("single_bloodgroup","B+");
+            goToNextActivity("single_bloodgroup", "B+");
             setSelectedBackground(str_blood_group);
-        }else if (view.getId() == R.id.dialog_bnegtive_tv){
+        } else if (view.getId() == R.id.dialog_bnegtive_tv) {
             str_blood_group = "B-";
-            goToNextActivity("single_bloodgroup","B-");
+            goToNextActivity("single_bloodgroup", "B-");
             setSelectedBackground(str_blood_group);
-        }else if (view.getId() == R.id.dialog_oplus_tv){
+        } else if (view.getId() == R.id.dialog_oplus_tv) {
             str_blood_group = "O+";
-            goToNextActivity("single_bloodgroup","O+");
+            goToNextActivity("single_bloodgroup", "O+");
             setSelectedBackground(str_blood_group);
-        }else if (view.getId() == R.id.dialog_onegative_tv){
+        } else if (view.getId() == R.id.dialog_onegative_tv) {
             str_blood_group = "O-";
-            goToNextActivity("single_bloodgroup","O-");
+            goToNextActivity("single_bloodgroup", "O-");
             setSelectedBackground(str_blood_group);
-        }else if (view.getId() == R.id.dialog_ABplus_tv){
+        } else if (view.getId() == R.id.dialog_ABplus_tv) {
             str_blood_group = "AB+";
             setSelectedBackground(str_blood_group);
-            goToNextActivity("single_bloodgroup","AB+");
-        }else if (view.getId() == R.id.dialog_ABnegtive_tv){
+            goToNextActivity("single_bloodgroup", "AB+");
+        } else if (view.getId() == R.id.dialog_ABnegtive_tv) {
             str_blood_group = "AB-";
-            goToNextActivity("single_bloodgroup","AB-");
+            goToNextActivity("single_bloodgroup", "AB-");
             setSelectedBackground(str_blood_group);
+        }else if (view.getId() == R.id.menu_nearby_showRequest){
+            Toast.makeText(this,"Comming Soon",Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void goToNextActivity(String type, String bgroup){
-        if (dialog != null){
+    public void goToNextActivity(String type, String bgroup) {
+        if (dialog != null) {
             dialog.dismiss();
             dialog = null;
         }
-        Intent intent = new Intent(MenuActivity.this, MapsActivity.class);
-        intent.putExtra("type", type);
-        intent.putExtra("bgroup",bgroup);
-        startActivity(intent);
+        if (AppConstants.checkLocationPermission(MenuActivity.this)) {
+            Intent intent = new Intent(MenuActivity.this, MapsActivity.class);
+            intent.putExtra("type", type);
+            intent.putExtra("bgroup", bgroup);
+            startActivity(intent);
+        } else {
+            Toast.makeText(MenuActivity.this, "Permissions needed to shows nearby blood bank.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void setSelectedBackground(String type) {

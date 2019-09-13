@@ -1,9 +1,10 @@
-package official.com.savelife_blooddonor;
+package official.com.savelife_blooddonor.Util;
 
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -20,17 +21,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
-import com.firebase.geofire.GeoQuery;
-import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -42,15 +36,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-
 import official.com.savelife_blooddonor.Network.IGoogleAPIService;
 import official.com.savelife_blooddonor.Network.Model.MyPlaces;
 import official.com.savelife_blooddonor.Network.Model.Results;
-import official.com.savelife_blooddonor.Screens.DonorRegisterActivity;
+import official.com.savelife_blooddonor.R;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,12 +49,11 @@ public class AppConstants {
 
     public static int LOC_PERMISSION_CODE = 1001;
     public static String TAG = "AppConstants";
-    public static int RADIUS = 2;
-    public static String DonorDuplicateKey = "";
 
     /**
      * Changes the System Bar Theme.
      */
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static final void setSystemBarTheme(final Activity pActivity, final boolean pIsDark) {
         // Fetch the current flags.
@@ -108,74 +97,74 @@ public class AppConstants {
 
     }
 
-    public static void NearByDonors(GoogleMap mMap, double latitude, double longitude) {
-        List<String> DonorKeys = new ArrayList<>();
-        List<Marker> DonorMarkerList = new ArrayList<>();
-        DatabaseReference DonorDatabaseRefrence = FirebaseDatabase.getInstance().getReference().child("Donor");
-        GeoFire geoFire = new GeoFire(DonorDatabaseRefrence);
-        GeoQuery query = geoFire.queryAtLocation(new GeoLocation(latitude, longitude), RADIUS);
-        query.removeAllListeners();
-        query.addGeoQueryEventListener(new GeoQueryEventListener() {
-            @Override
-            public void onKeyEntered(final String key, final GeoLocation location) {
-                Log.e(TAG, "key=" + key);
-                for (Marker markerIt : DonorMarkerList) {
-                    if (markerIt.getTag().equals(key)) {
-                        return;
-                    }
-                }
-                if (!DonorDuplicateKey.contentEquals(key)) {
-                    Log.e(TAG, key);
-                    Marker marker = mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(location.latitude, location.longitude))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.blood_bank))
-                            .title("Donor"));
-                    marker.setTag(key);
-                    DonorMarkerList.add(marker);
-                    DonorDuplicateKey = key;
-                    DonorKeys.add(key);
-                }
-                Log.e(TAG, "On key called");
-            }
-
-            @Override
-            public void onKeyExited(String key) {
-                for (Marker markerIt : DonorMarkerList) {
-                    if (markerIt.getTag().equals(key)) {
-                        //TODO: should key removed if driver not exists then send notification or not ?
-                        markerIt.remove();
-                        DonorMarkerList.remove(markerIt);
-                        return;
-                    }
-                }
-            }
-
-            @Override
-            public void onKeyMoved(String key, GeoLocation location) {
-                for (Marker markerIt : DonorMarkerList) {
-                    if (markerIt.getTag().equals(key)) {
-                        animateMarker(mMap, markerIt, new LatLng(location.latitude, location.longitude), false);
-//                            markerIt.setPosition(new LatLng(location.latitude, location.longitude));
-                        return;
-                    }
-                }
-            }
-
-            @Override
-            public void onGeoQueryReady() {
-                RADIUS++;
-                if (RADIUS <= 200) {
-                    NearByDonors(mMap, latitude, longitude);
-                }
-            }
-
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-
-            }
-        });
-
-    }
+//    public static void NearByDonors(GoogleMap mMap, double latitude, double longitude) {
+//        List<String> DonorKeys = new ArrayList<>();
+//        List<Marker> DonorMarkerList = new ArrayList<>();
+//        DatabaseReference DonorDatabaseRefrence = FirebaseDatabase.getInstance().getReference("DonorLocation");
+//        GeoFire geoFire = new GeoFire(DonorDatabaseRefrence);
+//        GeoQuery query = geoFire.queryAtLocation(new GeoLocation(latitude, longitude), RADIUS);
+//        query.removeAllListeners();
+//        query.addGeoQueryEventListener(new GeoQueryEventListener() {
+//            @Override
+//            public void onKeyEntered(final String key, final GeoLocation location) {
+//                Log.e(TAG, "key=" + key);
+//                for (Marker markerIt : DonorMarkerList) {
+//                    if (markerIt.getTag().equals(key)) {
+//                        return;
+//                    }
+//                }
+//                if (!DonorDuplicateKey.contentEquals(key)) {
+//                    Log.e(TAG, key);
+////                    Marker marker = mMap.addMarker(new MarkerOptions()
+////                            .position(new LatLng(location.latitude, location.longitude))
+////                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.blood_bank))
+////                            .title("Donor"));
+////                    marker.setTag(key);
+////                    DonorMarkerList.add(marker);
+//                    DonorDuplicateKey = key;
+//                    DonorKeys.add(key);
+//                }
+//                Log.e(TAG, "On key called");
+//            }
+//
+//            @Override
+//            public void onKeyExited(String key) {
+//                for (Marker markerIt : DonorMarkerList) {
+//                    if (markerIt.getTag().equals(key)) {
+//                        //TODO: should key removed if driver not exists then send notification or not ?
+//                        markerIt.remove();
+//                        DonorMarkerList.remove(markerIt);
+//                        return;
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onKeyMoved(String key, GeoLocation location) {
+//                for (Marker markerIt : DonorMarkerList) {
+//                    if (markerIt.getTag().equals(key)) {
+//                        animateMarker(mMap, markerIt, new LatLng(location.latitude, location.longitude), false);
+////                            markerIt.setPosition(new LatLng(location.latitude, location.longitude));
+//                        return;
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onGeoQueryReady() {
+//                RADIUS++;
+//                if (RADIUS <= 200) {
+//                    NearByDonors(mMap, latitude, longitude);
+//                }
+//            }
+//
+//            @Override
+//            public void onGeoQueryError(DatabaseError error) {
+//
+//            }
+//        });
+//
+//    }
 
     public static void LoadBloodDonorsByBloodGroup(GoogleMap mMap, String bgroup) {
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference().child("Donor");
@@ -317,6 +306,21 @@ public class AppConstants {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setCancelable(cancelable);
         return dialog;
+    }
+
+
+    public static SharedPreferences getSharedPref(Context context, String name){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(name,Context.MODE_PRIVATE);
+        return sharedPreferences;
+    }
+
+    public static SharedPreferences.Editor getSharedPrefEditor(Context context, String name){
+        SharedPreferences.Editor editor = getSharedPref(context,name).edit();
+        return editor;
+    }
+
+    public static String getRole(Context context, String name){
+        return getSharedPref(context,name).getString("role","");
     }
 
 }

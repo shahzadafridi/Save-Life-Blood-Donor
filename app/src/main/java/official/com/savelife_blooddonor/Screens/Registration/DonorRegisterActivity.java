@@ -1,4 +1,4 @@
-package official.com.savelife_blooddonor.Screens;
+package official.com.savelife_blooddonor.Screens.Registration;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +24,6 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,7 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import official.com.savelife_blooddonor.AppConstants;
+import official.com.savelife_blooddonor.Screens.MainActivity;
+import official.com.savelife_blooddonor.Util.AppConstants;
 import official.com.savelife_blooddonor.R;
 
 public class DonorRegisterActivity extends AppCompatActivity implements View.OnClickListener, LocationListener {
@@ -51,9 +51,9 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
     boolean isGenderSelected = false;
     String gender = "male";
     Location location;
-    boolean isDonorExists = false;
     protected LocationManager locationManager;
     boolean isEmailExists = false;
+    String str_phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +61,7 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
         setContentView(R.layout.activity_donor_register);
         InitUI();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        str_phone = getIntent().getStringExtra("phone");
     }
 
     private void InitUI() {
@@ -78,7 +79,7 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
         email = (EditText) findViewById(R.id.reg_email);
         phone = (EditText) findViewById(R.id.reg_phone);
         age = (EditText) findViewById(R.id.reg_age);
-        password = (EditText) findViewById(R.id.reg_password);
+//        password = (EditText) findViewById(R.id.reg_password);
         male = (ImageView) findViewById(R.id.reg_male_iv);
         female = (ImageView) findViewById(R.id.reg_female_iv);
         done = (Button) findViewById(R.id.reg_done_btn);
@@ -101,6 +102,7 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
         done.setOnClickListener(this);
         click_location.setOnClickListener(this);
         Oplus.setBackground(getResources().getDrawable(R.drawable.color_round));
+//        phone.setText(str_phone);
     }
 
     @Override
@@ -158,6 +160,9 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
                 String str_phone = phone.getText().toString();
                 checPhoneNumber(str_email, str_phone);
             } else {
+                done.setText("Done");
+                done.setEnabled(true);
+                progressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(DonorRegisterActivity.this, "Incomplete details, failed to register", Toast.LENGTH_SHORT).show();
             }
         }
@@ -198,9 +203,13 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
                 if (snapshot.exists() && snapshot.getValue() != null) {
                     for (DataSnapshot snap : snapshot.getChildren()) {
                         Map snap_info = (Map) snap.getValue();
-                        String email = snap_info.get("email").toString();
-                        if (email.contentEquals(str_email)) {
-                            isEmailExists = true;
+                        if (snap_info.get("email") != null) {
+                            String email = snap_info.get("email").toString();
+                            if (email.contentEquals(str_email)) {
+                                isEmailExists = true;
+                            } else {
+                                isEmailExists = false;
+                            }
                         } else {
                             isEmailExists = false;
                         }
@@ -230,14 +239,14 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
         String str_email = email.getText().toString();
         String str_phone = phone.getText().toString();
         String str_age = age.getText().toString();
-        String str_password = password.getText().toString();
+//        String str_password = password.getText().toString();
         String str_latituted = String.valueOf(location.getLatitude());
         String str_longtited = String.valueOf(location.getLongitude());
 
         Map<String, String> map = new HashMap<>();
         map.put("name", str_name);
         map.put("email", str_email);
-        map.put("password", str_password);
+//        map.put("password", str_password);
         map.put("phone", str_phone);
         map.put("gender", gender);
         map.put("age", str_age);
@@ -245,22 +254,23 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
         map.put("latitude", str_latituted);
         map.put("longtitude", str_longtited);
 
-        DatabaseReference donorLocRef = FirebaseDatabase.getInstance().getReference("Donor").child(str_phone);
+        DatabaseReference donorRef = FirebaseDatabase.getInstance().getReference("Donor").child(str_phone);
+        DatabaseReference donorLocRef = FirebaseDatabase.getInstance().getReference("DonorLocation");
         // Register Data..
-        donorLocRef.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+        donorRef.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     GeoFire geoFire = new GeoFire(donorLocRef);
                     Double mLatitude = Double.parseDouble(str_latituted);
                     Double mLongtitude = Double.parseDouble(str_longtited);
-                    geoFire.setLocation("location", new GeoLocation(mLatitude, mLongtitude), new GeoFire.CompletionListener() {
+                    geoFire.setLocation(str_phone, new GeoLocation(mLatitude, mLongtitude), new GeoFire.CompletionListener() {
                         @Override
                         public void onComplete(String key, DatabaseError error) {
                             if (error != null) {
-                                Log.e(TAG,"There was an error saving the location to GeoFire: " + error);
+                                Log.e(TAG, "There was an error saving the location to GeoFire: " + error);
                             } else {
-                                Log.e(TAG,"Location saved on server successfully!");
+                                Log.e(TAG, "Location saved on server successfully!");
                             }
                         }
                     });
@@ -273,10 +283,10 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
                         public void run() {
                             done.setText("Done");
                             done.setEnabled(true);
-                            Intent intent = new Intent(DonorRegisterActivity.this,MainActivity.class);
+                            Intent intent = new Intent(DonorRegisterActivity.this, MainActivity.class);
                             startActivity(intent);
                         }
-                    },2000);
+                    }, 2000);
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -371,7 +381,7 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
         String str_email = email.getText().toString();
         String str_phone = phone.getText().toString();
         String str_age = age.getText().toString();
-        String str_password = password.getText().toString();
+//        String str_password = password.getText().toString();
         String str_location = location_tv.getText().toString();
 
         if (str_email.contains("@")) {
@@ -412,7 +422,7 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
         }
 
         if (TextUtils.isEmpty(str_name)) {
-            age.setError("Name can't be null");
+            name.setError("Name can't be null");
             isValid = false;
             builder.append("Name can't be null");
             builder.append("\n");
@@ -425,19 +435,19 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
             builder.append("\n");
         }
 
-        if (TextUtils.isEmpty(str_password)) {
-            password.setError("Password can't be null");
-            isValid = false;
-            builder.append("Password can't be null");
-            builder.append("\n");
-        } else {
-            if (str_password.length() < 6) {
-                password.setError("Password must be at least 6 characters");
-                isValid = false;
-                builder.append("Password must be at least 6 characters");
-                builder.append("\n");
-            }
-        }
+//        if (TextUtils.isEmpty(str_password)) {
+//            password.setError("Password can't be null");
+//            isValid = false;
+//            builder.append("Password can't be null");
+//            builder.append("\n");
+//        } else {
+//            if (str_password.length() < 6) {
+//                password.setError("Password must be at least 6 characters");
+//                isValid = false;
+//                builder.append("Password must be at least 6 characters");
+//                builder.append("\n");
+//            }
+//        }
 
         if (!isGenderSelected) {
             isValid = false;

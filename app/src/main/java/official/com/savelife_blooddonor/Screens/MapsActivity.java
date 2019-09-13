@@ -8,6 +8,11 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -22,7 +27,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import official.com.savelife_blooddonor.AppConstants;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import java.util.ArrayList;
+import java.util.List;
+import official.com.savelife_blooddonor.Util.AppConstants;
 import official.com.savelife_blooddonor.Network.IGoogleAPIService;
 import official.com.savelife_blooddonor.Network.RetrofitConstant;
 import official.com.savelife_blooddonor.R;
@@ -40,7 +50,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private long FASTEST_INTERVAL = 15000; /* 15 sec */
     IGoogleAPIService mService;
     boolean isNearByFired = false;
-
+    public int RADIUS = 1;
+    public String DonorDuplicateKey = "";
+    List<String> DonorKeys = new ArrayList<>();
+    List<Marker> DonorMarkerList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     }
                                 } else  if (type.contentEquals("nearby_donor")){
                                     if (mLocation != null) {
-                                        AppConstants.NearByDonors(mMap,mLocation.getLatitude(),mLocation.getLongitude());
+                                        NearByDonors(mMap,mLocation.getLatitude(),mLocation.getLongitude());
                                         isNearByFired = true;
                                     }
                                 }
@@ -140,6 +153,70 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    public void NearByDonors(GoogleMap mMap, double latitude, double longitude) {
+        DatabaseReference DonorDatabaseRefrence = FirebaseDatabase.getInstance().getReference("DonorLocation");
+        GeoFire geoFire = new GeoFire(DonorDatabaseRefrence);
+        GeoQuery query = geoFire.queryAtLocation(new GeoLocation(latitude, longitude), RADIUS);
+        query.removeAllListeners();
+        query.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(final String key, final GeoLocation location) {
+                for (Marker markerIt : DonorMarkerList) {
+                    if (markerIt.getTag().equals(key)) {
+                        return;
+                    }
+                }
+                if (!DonorDuplicateKey.contentEquals(key)) {
+                    Log.e(TAG, key);
+//                    Marker marker = mMap.addMarker(new MarkerOptions()
+//                            .position(new LatLng(location.latitude, location.longitude))
+//                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.blood_bank))
+//                            .title("Donor"));
+//                    marker.setTag(key);
+//                    DonorMarkerList.add(marker);
+                    DonorDuplicateKey = key;
+                    DonorKeys.add(key);
+                }
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+                for (Marker markerIt : DonorMarkerList) {
+                    if (markerIt.getTag().equals(key)) {
+                        //TODO: should key removed if driver not exists then send notification or not ?
+                        markerIt.remove();
+                        DonorMarkerList.remove(markerIt);
+                        return;
+                    }
+                }
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+                for (Marker markerIt : DonorMarkerList) {
+                    if (markerIt.getTag().equals(key)) {
+                        AppConstants.animateMarker(mMap, markerIt, new LatLng(location.latitude, location.longitude), false);
+//                            markerIt.setPosition(new LatLng(location.latitude, location.longitude));
+                        return;
+                    }
+                }
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+                RADIUS++;
+                if (RADIUS <= 200) {
+                    NearByDonors(mMap, latitude, longitude);
+                }
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+
+            }
+        });
+
+    }
 
 
     @Override
