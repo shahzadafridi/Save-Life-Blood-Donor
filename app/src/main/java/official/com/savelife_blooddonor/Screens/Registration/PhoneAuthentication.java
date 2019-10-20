@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -82,7 +83,12 @@ public class PhoneAuthentication extends AppCompatActivity implements View.OnCli
                 phone.setError("Enter phone number");
             } else {
                 if (AppConstants.isValidNumberAcceptPtcl(str_phone)) { // remove ! when testing finished.
-                    phoneAuthenticator = new PhoneAuthenticator(PhoneAuthentication.this, otpTextView, message, progressBar, optSendLayout, optVerificationLayout,str_phone, role);
+                    String requester_status = null;
+                    if (getIntent().getStringArrayExtra("contact") != null) {
+                       requester_status =  getIntent().getStringExtra("contact");
+                        Log.e(TAG,requester_status);
+                    }
+                    phoneAuthenticator = new PhoneAuthenticator(PhoneAuthentication.this, otpTextView, message, progressBar, optSendLayout, optVerificationLayout,str_phone, role,requester_status);
                     startTimer();
                     optSendLayout.setVisibility(View.GONE);
                     optVerificationLayout.setVisibility(View.VISIBLE);
@@ -107,6 +113,8 @@ public class PhoneAuthentication extends AppCompatActivity implements View.OnCli
             }
 
             public void onFinish() {
+                message.setText("Send verificaiton message failed, try again.");
+                progressBar.setVisibility(View.INVISIBLE);
                 timer.setText("00:00");
                 resend_otp.setTextColor(getResources().getColor(R.color.black));
                 resend_otp.setEnabled(true);

@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,14 +31,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import official.com.savelife_blooddonor.Screens.BloodRequest.RequestActivity;
 import official.com.savelife_blooddonor.Screens.MainActivity;
 import official.com.savelife_blooddonor.Util.AppConstants;
 import official.com.savelife_blooddonor.R;
+import official.com.savelife_blooddonor.Util.Locator;
 
-public class DonorRegisterActivity extends AppCompatActivity implements View.OnClickListener, LocationListener {
+public class DonorRegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
     TextView back, Aplus, Aneg, Bplus, Bneg, Oplus, Oneg, ABplus, ABneg, male_lable, female_label, location_tv, click_location;
     EditText name, email, phone, age, password;
@@ -53,7 +53,7 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
     Location location;
     protected LocationManager locationManager;
     boolean isEmailExists = false;
-    String str_phone;
+    String str_phone, requeser_status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +62,9 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
         InitUI();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 //        str_phone = getIntent().getStringExtra("phone");
+        if (getIntent().getStringExtra("contact") != null){
+            requeser_status = getIntent().getStringExtra("contact");
+        }
     }
 
     private void InitUI() {
@@ -145,12 +148,17 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
             str_blood_group = "AB-";
             setSelectedBackground(str_blood_group);
         } else if (id == R.id.reg_click_location) {
-            location = getLastKnownLocation();
-            if (location != null) {
-                location_tv.setText("Latitude:" + location.getLatitude() + " , Longtitude:" + location.getLongitude());
+            if (AppConstants.checkLocationPermission(DonorRegisterActivity.this)) {
+                location = Locator.getInstance(DonorRegisterActivity.this, locationManager).getLastKnownLocation();
+                if (location != null) {
+                    location_tv.setText("Latitude:" + location.getLatitude() + " , Longtitude:" + location.getLongitude());
+                } else {
+                    Toast.makeText(DonorRegisterActivity.this, "Location can't be null.", Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(DonorRegisterActivity.this, "Location can't be null.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DonorRegisterActivity.this, "Permission needed.", Toast.LENGTH_SHORT).show();
             }
+
         } else if (id == R.id.reg_done_btn) {
             done.setText("");
             done.setEnabled(false);
@@ -283,8 +291,13 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
                         public void run() {
                             done.setText("Done");
                             done.setEnabled(true);
-                            Intent intent = new Intent(DonorRegisterActivity.this, MainActivity.class);
-                            startActivity(intent);
+                            if (requeser_status == null) {
+                                Intent intent = new Intent(DonorRegisterActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }else {
+                                Intent intent = new Intent(DonorRegisterActivity.this, RequestActivity.class);
+                                startActivity(intent);
+                            }
                         }
                     }, 2000);
                 }
@@ -470,50 +483,5 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
                 progressBar.setVisibility(View.GONE);
             }
         });
-    }
-
-    public Location getLastKnownLocation() {
-        final long MIN_DISTANCE_FOR_UPDATE = 10, MIN_TIME_FOR_UPDATE = 1000 * 60;
-        Location bestLocation = null;
-        boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (isGPSEnabled) {
-            if (AppConstants.checkLocationPermission(DonorRegisterActivity.this)) {
-                locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_FOR_UPDATE, MIN_DISTANCE_FOR_UPDATE, this);
-                List<String> providers = locationManager.getProviders(true);
-                for (String provider : providers) {
-                    Location l = locationManager.getLastKnownLocation(provider);
-                    if (l == null) {
-                        continue;
-                    }
-                    if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
-                        bestLocation = l;
-                    }
-                }
-            }
-        } else {
-            Log.e("check", "Gps is not enable");
-        }
-        return bestLocation;
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 }

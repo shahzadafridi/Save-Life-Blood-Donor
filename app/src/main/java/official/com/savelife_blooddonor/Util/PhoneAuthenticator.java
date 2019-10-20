@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -21,8 +22,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import in.aabhasjindal.otptextview.OtpTextView;
+import official.com.savelife_blooddonor.Model.Request;
+import official.com.savelife_blooddonor.Screens.BloodRequest.RequestActivity;
+import official.com.savelife_blooddonor.Screens.MainActivity;
 import official.com.savelife_blooddonor.Screens.Registration.DoneeRegisterActivity;
 import official.com.savelife_blooddonor.Screens.Registration.DonorRegisterActivity;
 
@@ -36,11 +45,11 @@ public class PhoneAuthenticator extends PhoneAuthProvider.OnVerificationStateCha
     ProgressBar progressBar;
     RelativeLayout optSendLayout;
     LinearLayout optVerificationLayout;
-    String role,phone;
+    String role, phone, requester_status;
     String TAG = "PhoneAuthenticator";
+    boolean isDoneeExists = false, isDonorExists = false;
 
-
-    public PhoneAuthenticator(Context context, OtpTextView otpTextView, TextView message, ProgressBar progressBar, RelativeLayout optSendLayout, LinearLayout optVerificationLayout, String str_phone, String role) {
+    public PhoneAuthenticator(Context context, OtpTextView otpTextView, TextView message, ProgressBar progressBar, RelativeLayout optSendLayout, LinearLayout optVerificationLayout, String str_phone, String role, String requester_status) {
         this.context = context;
         this.otpTextView = otpTextView;
         this.message = message;
@@ -49,6 +58,7 @@ public class PhoneAuthenticator extends PhoneAuthProvider.OnVerificationStateCha
         this.optVerificationLayout = optVerificationLayout;
         this.role = role;
         this.phone = str_phone;
+        this.requester_status = requester_status;
     }
 
     @Override
@@ -104,33 +114,102 @@ public class PhoneAuthenticator extends PhoneAuthProvider.OnVerificationStateCha
                 @Override
                 public void run() {
                     if (role.contentEquals("donor")) {
-                        AppConstants.getSharedPrefEditor(context,"SESSION")
-                                .putBoolean("isLogin",true)
-                                .putString("role","donor")
-                                .commit();
-                        Intent intent = new Intent(context, DonorRegisterActivity.class);
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.putExtra("phone","+92"+phone);
-                        context.startActivity(intent);
+                        checkDonorExists(phone);
                     } else if (role.contentEquals("donee")) {
-                        AppConstants.getSharedPrefEditor(context,"SESSION")
-                                .putBoolean("isLogin",true)
-                                .putString("role","donee")
-                                .commit();
-                        Intent intent = new Intent(context, DoneeRegisterActivity.class);
-                        intent.putExtra("phone","+92"+phone);
-                        context.startActivity(intent);
+                        checkDoneeExists(phone);
                     }
                 }
             }, 3000);
 
         } else {
             Log.e(TAG, "Verification unsuccessful");
-            otpTextView.showError();
             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                 message.setText("Invalid code entered.");
             }
         }
+    }
+
+
+    private void checkDoneeExists(String str_phone) {
+        AppConstants.getSharedPrefEditor(context, "SESSION")
+                .putBoolean("isLogin", true)
+                .putString("role", "donee")
+                .putString("phone", phone)
+                .commit();
+
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference().child("Donee");
+        rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists() && snapshot.getValue() != null) {
+                    if (snapshot.hasChild(str_phone)) {
+                        Log.e(TAG, "Donee exists");
+                        Intent intent = new Intent(context, MainActivity.class);
+                        context.startActivity(intent);
+                    } else {
+                        Log.e(TAG, "Donee not exists");
+                        Intent intent = new Intent(context, DoneeRegisterActivity.class);
+                        intent.putExtra("phone", "+92" + phone);
+                        context.startActivity(intent);
+                    }
+                } else {
+                    Log.e(TAG, "Donee not exists");
+                    Intent intent = new Intent(context, DoneeRegisterActivity.class);
+                    intent.putExtra("phone", "+92" + phone);
+                    context.startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, databaseError.getMessage());
+            }
+        });
+    }
+
+    private void checkDonorExists(String str_phone) {
+        AppConstants.getSharedPrefEditor(context, "SESSION")
+                .putBoolean("isLogin", true)
+                .putString("role", "donor")
+                .putString("phone", phone)
+                .commit();
+
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference().child("Donor");
+        rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists() && snapshot.getValue() != null) {
+                    if (snapshot.hasChild(str_phone)) {
+                        Log.e(TAG, "Donor exists");
+                        Intent intent;
+                        intent = new Intent(context, MainActivity.class);
+                        if (requester_status != null) {
+                            intent = new Intent(context, RequestActivity.class);
+                        }
+                        context.startActivity(intent);
+                    } else {
+                        Log.e(TAG, "Donor not exists");
+                        Intent intent = new Intent(context, DonorRegisterActivity.class);
+                        intent.putExtra("contact", requester_status);
+                        intent.putExtra("phone", "+92" + phone);
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        context.startActivity(intent);
+
+                    }
+                } else {
+                    Log.e(TAG, "Donor not exists");
+                    Intent intent = new Intent(context, DonorRegisterActivity.class);
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.putExtra("phone", "+92" + phone);
+                    context.startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, databaseError.getMessage());
+            }
+        });
     }
 
     public PhoneAuthProvider.ForceResendingToken getmResendToken() {

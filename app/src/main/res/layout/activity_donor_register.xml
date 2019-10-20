@@ -76,19 +76,19 @@
                     android:paddingLeft="32dp"
                     android:textSize="18dp" />
 
-<!--                <EditText-->
-<!--                    android:id="@+id/reg_password"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginLeft="32dp"-->
-<!--                    android:layout_marginTop="16dp"-->
-<!--                    android:layout_marginRight="32dp"-->
-<!--                    android:inputType="textPassword"-->
-<!--                    android:background="@drawable/gray_btn_bg"-->
-<!--                    android:gravity="center_vertical"-->
-<!--                    android:hint="Password"-->
-<!--                    android:paddingLeft="32dp"-->
-<!--                    android:textSize="18dp" />-->
+                <!--                <EditText-->
+                <!--                    android:id="@+id/reg_password"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_marginLeft="32dp"-->
+                <!--                    android:layout_marginTop="16dp"-->
+                <!--                    android:layout_marginRight="32dp"-->
+                <!--                    android:inputType="textPassword"-->
+                <!--                    android:background="@drawable/gray_btn_bg"-->
+                <!--                    android:gravity="center_vertical"-->
+                <!--                    android:hint="Password"-->
+                <!--                    android:paddingLeft="32dp"-->
+                <!--                    android:textSize="18dp" />-->
 
                 <EditText
                     android:id="@+id/reg_phone"
@@ -99,8 +99,8 @@
                     android:layout_marginRight="32dp"
                     android:background="@drawable/gray_btn_bg"
                     android:gravity="center_vertical"
-                    android:inputType="phone"
                     android:hint="Phone"
+                    android:inputType="phone"
                     android:paddingLeft="32dp"
                     android:textSize="18dp" />
 
@@ -113,8 +113,8 @@
                     android:layout_marginRight="32dp"
                     android:background="@drawable/gray_btn_bg"
                     android:gravity="center_vertical"
-                    android:inputType="number"
                     android:hint="Age"
+                    android:inputType="number"
                     android:paddingLeft="32dp"
                     android:textSize="18dp" />
 
@@ -350,14 +350,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="22dp"
                     android:layout_marginLeft="32dp"
+                    android:layout_marginTop="22dp"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="26dp"
                         android:layout_height="36dp"
-                        android:background="@drawable/location_icon"/>
+                        android:background="@drawable/location_icon" />
 
                     <TextView
                         android:id="@+id/reg_click_location"
@@ -379,8 +379,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginTop="16dp"
                     android:layout_marginLeft="32dp"
+                    android:layout_marginTop="16dp"
                     android:fontFamily="@font/montserrat_regular"
                     android:gravity="center_horizontal"
                     android:textColor="#000"
@@ -412,18 +412,18 @@
                         android:id="@+id/reg_progressBar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
-                        android:visibility="invisible"
+                        android:layout_centerVertical="true"
                         android:indeterminate="true"
+                        android:indeterminateTint="@color/white"
                         android:indeterminateTintMode="src_atop"
-                        android:indeterminateTint="@color/white"/>
+                        android:visibility="invisible" />
 
                 </RelativeLayout>
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="36dp"/>
+                    android:layout_height="36dp" />
 
             </LinearLayout>
 

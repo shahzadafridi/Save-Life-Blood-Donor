@@ -28,6 +28,9 @@ public class RegistrationMenu extends AppCompatActivity implements View.OnClickL
         if (view.getId() == R.id.reg_menu_donor){
             Intent intent = new Intent(RegistrationMenu.this,PhoneAuthentication.class);
             intent.putExtra("role","donor");
+            if (getIntent().getStringArrayExtra("contact") != null) {
+                intent.putExtra("contact", getIntent().getStringExtra("contact"));
+            }
             startActivity(intent);
         }else if (view.getId() == R.id.reg_menu_donee){
             Intent intent = new Intent(RegistrationMenu.this,PhoneAuthentication.class);

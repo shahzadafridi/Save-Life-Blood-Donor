@@ -48,6 +48,7 @@ import retrofit2.Response;
 public class AppConstants {
 
     public static int LOC_PERMISSION_CODE = 1001;
+    public static int CALL_PERMISSION_CODE = 1002;
     public static String TAG = "AppConstants";
 
     /**
@@ -227,6 +228,26 @@ public class AppConstants {
 
     }
 
+    public static boolean checkPhonePermission(Context context) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(((Activity) context), Manifest.permission.CALL_PHONE))
+                ActivityCompat.requestPermissions(((Activity) context), new String[]{
+
+                        Manifest.permission.CALL_PHONE
+
+                }, CALL_PERMISSION_CODE);
+            else
+                ActivityCompat.requestPermissions(((Activity) context), new String[]{Manifest.permission.CALL_PHONE
+
+                }, CALL_PERMISSION_CODE);
+            return false;
+
+        } else
+            return true;
+
+    }
+
     public static boolean isValidEmailAddress(String email) {
         String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
         if (email.matches(emailPattern)) {
@@ -321,6 +342,10 @@ public class AppConstants {
 
     public static String getRole(Context context, String name){
         return getSharedPref(context,name).getString("role","");
+    }
+
+    public static String getPhone(Context context,String name){
+        return getSharedPref(context,name).getString("phone","");
     }
 
 }

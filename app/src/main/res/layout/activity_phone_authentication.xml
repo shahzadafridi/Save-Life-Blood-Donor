@@ -60,7 +60,6 @@
             android:layout_marginRight="16dp"
             android:background="@drawable/gray_btn_bg"
             android:hint="e-g 03082001110"
-            android:text="650-555-1234"
             android:inputType="number"
             android:paddingLeft="32dp"
             android:textSize="18dp" />
@@ -133,6 +132,7 @@
             android:id="@+id/verifcation_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/red"
             android:layout_below="@+id/otp_view"
             android:layout_marginTop="16dp" />
 
@@ -150,6 +150,7 @@
 
     <ProgressBar
         android:id="@+id/verify_progressBar"
+        android:indeterminateTint="@color/light_red"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

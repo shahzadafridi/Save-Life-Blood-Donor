@@ -38,7 +38,19 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         bloodGroup.setOnClickListener(this);
         nearByLoc.setOnClickListener(this);
         request.setOnClickListener(this);
+        IntializeDialog();
+        String getRole = AppConstants.getRole(this,"SESSION");
 
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            if (getRole.contentEquals("donor")) {
+                request.setVisibility(View.VISIBLE);
+            }else {
+                request.setVisibility(View.INVISIBLE);
+            }
+        }
+    }
+
+    public void IntializeDialog(){
         dialog = AppConstants.onCreateDialog(MenuActivity.this, R.layout.blood_group_dialog, true);
         Aplus = (TextView) dialog.findViewById(R.id.dialog_aplus_tv);
         Aneg = (TextView) dialog.findViewById(R.id.dialog_anegtive_tv);
@@ -56,16 +68,6 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         Oneg.setOnClickListener(this);
         ABplus.setOnClickListener(this);
         ABneg.setOnClickListener(this);
-
-        String getRole = AppConstants.getRole(this,"SESSION");
-
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            if (getRole.contentEquals("donor")) {
-                request.setVisibility(View.VISIBLE);
-            }else {
-                request.setVisibility(View.INVISIBLE);
-            }
-        }
     }
 
     @Override
@@ -75,6 +77,9 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         } else if (view.getId() == R.id.menu_nearby_location) {
             goToNextActivity("nearby_donor", "");
         } else if (view.getId() == R.id.menu_blood_group) {
+            if (dialog == null){
+                IntializeDialog();
+            }
             dialog.show();
         } else if (view.getId() == R.id.dialog_aplus_tv) {
             str_blood_group = "A+";
