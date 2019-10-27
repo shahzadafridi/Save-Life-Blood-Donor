@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             if (getRole.contentEquals("donee")) {
                 request.setVisibility(View.VISIBLE);
+                profile.setVisibility(View.INVISIBLE);
             }
         } else {
             logout_label.setVisibility(View.INVISIBLE);

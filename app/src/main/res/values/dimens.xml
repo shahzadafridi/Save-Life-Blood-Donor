@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="circle_radius">48dp</dimen>
+    <dimen name="line_width">4dp</dimen>
+    <dimen name="line_height">40dp</dimen>
+    <dimen name="stroke_width">4dp</dimen>
+    <dimen name="text_size">7sp</dimen>
+    <dimen name="inner_circle_radius">40dp</dimen>
+    <dimen name="inner_circle_margin">4dp</dimen>
+    <dimen name="line_top_margin">20dp</dimen>
+</resources>

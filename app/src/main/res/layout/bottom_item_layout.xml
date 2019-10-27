@@ -162,14 +162,15 @@
             android:layout_weight="2">
 
             <Button
+                android:id="@+id/sms"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.6"
-                android:textSize="16dp"
-                android:textColor="@color/white"
-                android:fontFamily="@font/montserrat_bold"
                 android:background="@drawable/contact_green_bg"
-                android:text="sms" />
+                android:fontFamily="@font/montserrat_bold"
+                android:text="sms"
+                android:textColor="@color/white"
+                android:textSize="16dp" />
 
             <TextView
                 android:layout_width="0dp"
@@ -177,14 +178,15 @@
                 android:layout_weight="0.2"/>
 
             <Button
+                android:id="@+id/call"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.6"
-                android:textSize="16dp"
-                android:textColor="@color/white"
                 android:background="@drawable/contact_green_bg"
                 android:fontFamily="@font/montserrat_bold"
-                android:text="CALL"/>
+                android:text="CALL"
+                android:textColor="@color/white"
+                android:textSize="16dp" />
 
         </LinearLayout>
 

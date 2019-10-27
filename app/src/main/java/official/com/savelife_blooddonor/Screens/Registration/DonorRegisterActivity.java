@@ -252,6 +252,7 @@ public class DonorRegisterActivity extends AppCompatActivity implements View.OnC
         String str_longtited = String.valueOf(location.getLongitude());
 
         Map<String, String> map = new HashMap<>();
+        map.put("status","active");
         map.put("name", str_name);
         map.put("email", str_email);
 //        map.put("password", str_password);

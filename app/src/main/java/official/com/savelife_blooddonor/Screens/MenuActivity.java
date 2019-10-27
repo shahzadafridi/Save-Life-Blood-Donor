@@ -43,6 +43,9 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             if (getRole.contentEquals("donor")) {
+                nearByBBank.setVisibility(View.GONE);
+                bloodGroup.setVisibility(View.GONE);
+//                nearByLoc.setVisibility(View.GONE);
                 request.setVisibility(View.VISIBLE);
             }else {
                 request.setVisibility(View.INVISIBLE);
