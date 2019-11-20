@@ -48,10 +48,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         String getRole = AppConstants.getRole(this, "SESSION");
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+        if (AppConstants.isUserLogin(MainActivity.this)) {
             if (getRole.contentEquals("donee")) {
                 request.setVisibility(View.VISIBLE);
                 profile.setVisibility(View.INVISIBLE);
+                profile_label.setVisibility(View.INVISIBLE);
             }
         } else {
             logout_label.setVisibility(View.INVISIBLE);
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent intent = new Intent(MainActivity.this, MenuActivity.class);
             startActivity(intent);
         } else if (view.getId() == R.id.main_bottom_label) {
-            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            if (AppConstants.isUserLogin(MainActivity.this)) {
                 Toast.makeText(MainActivity.this, "You are already login", Toast.LENGTH_SHORT).show();
             } else {
                 Intent intent = new Intent(MainActivity.this, RegistrationMenu.class);
@@ -78,7 +79,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(intent);
         } else if (view.getId() == R.id.logout) {
             progressBar.setVisibility(View.VISIBLE);
-            FirebaseAuth.getInstance().signOut();
+            AppConstants.getSharedPrefEditor(MainActivity.this, "SESSION")
+                    .putBoolean("isLogin", false)
+                    .commit();
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override

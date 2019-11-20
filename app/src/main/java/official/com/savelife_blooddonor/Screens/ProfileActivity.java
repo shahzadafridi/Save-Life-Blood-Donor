@@ -56,7 +56,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     TextView tvBack,tvEdit;
     TextView age,bgroup,email,gender,name,phone,showLocation,etShowLocation;
     EditText etAge,etBgroup,etEmail,etGender,etName,etPhone;
-    String sAge,sBgroup,sEmail,sGender,sName,sPhone,sLat,sLon,sStatus;
+    String sAge,sBgroup,sEmail,sGender,sName,sPhone,sLat,sLon,sStatus="online";
     Button back,update,bottomsheetCurrent,bottomsheetShowonMap;
     ProgressBar progressBar,etProgressBar;
     LinearLayout displayLayout,editLayout,mainLayout;
@@ -94,7 +94,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         sAge = map.get("age").toString();
                         sBgroup = map.get("bgroup").toString();
                         sEmail = map.get("email").toString();
-                        sStatus = map.get("status").toString();
+                        if (map.get("status") != null) {
+                            sStatus = map.get("status").toString();
+                        }
                         sGender = map.get("gender").toString();
                         sLat = map.get("latitude").toString();
                         sLon = map.get("longtitude").toString();
@@ -240,10 +242,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         if (view.getId() == R.id.profile_back){
             onBackPressed();
         }else if (view.getId() == R.id.profile_showsLocation){
-//            View dialogView = getLayoutInflater().inflate(R.layout.bottom_item_layout, null);
-//            BottomSheetDialog dialog = new BottomSheetDialog(this);
-//            dialog.setContentView(dialogView);
-//            dialog.show();
+            Intent intent = new Intent(ProfileActivity.this,ProfileMapActivity.class);
+            intent.putExtra("lat",sLat);
+            intent.putExtra("lon",sLon);
+            intent.putExtra("phone",getPhone);
+            startActivity(intent);
         }else if (view.getId() == R.id.et_profile_Update){
             etProgressBar.setVisibility(View.VISIBLE);
             update.setText("");

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import official.com.savelife_blooddonor.Screens.BloodRequest.RequestActivity;
 import official.com.savelife_blooddonor.Util.AppConstants;
 import official.com.savelife_blooddonor.R;
 
@@ -41,11 +42,11 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         IntializeDialog();
         String getRole = AppConstants.getRole(this,"SESSION");
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+        if (AppConstants.isUserLogin(MenuActivity.this)) {
             if (getRole.contentEquals("donor")) {
                 nearByBBank.setVisibility(View.GONE);
                 bloodGroup.setVisibility(View.GONE);
-//                nearByLoc.setVisibility(View.GONE);
+                nearByLoc.setVisibility(View.GONE);
                 request.setVisibility(View.VISIBLE);
             }else {
                 request.setVisibility(View.INVISIBLE);
@@ -117,7 +118,8 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             goToNextActivity("single_bloodgroup", "AB-");
             setSelectedBackground(str_blood_group);
         }else if (view.getId() == R.id.menu_nearby_showRequest){
-            Toast.makeText(this,"Comming Soon",Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MenuActivity.this, RequestActivity.class);
+            startActivity(intent);
         }
     }
 

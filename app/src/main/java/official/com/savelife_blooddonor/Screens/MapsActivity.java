@@ -3,6 +3,9 @@ package official.com.savelife_blooddonor.Screens;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -25,6 +28,7 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
+import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -41,6 +45,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,6 +58,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import official.com.savelife_blooddonor.Screens.Registration.RegistrationMenu;
 import official.com.savelife_blooddonor.Util.AppConstants;
 import official.com.savelife_blooddonor.Network.IGoogleAPIService;
 import official.com.savelife_blooddonor.Network.RetrofitConstant;
@@ -72,6 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private long FASTEST_INTERVAL = 15000; /* 15 sec */
     IGoogleAPIService mService;
     boolean isNearByFired = false;
+    boolean isNearByBloodBank = false;
     public int RADIUS = 1;
     public String DonorDuplicateKey = "";
     List<String> DonorKeys = new ArrayList<>();
@@ -126,7 +135,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 circleFrameLayout.setVisibility(View.GONE);
                 pinFrameLayout.setVisibility(View.GONE);
             }
-        }, 5000);
+        }, 2000);
     }
 
     private void showCircleMarker() {
@@ -142,7 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     //resing circle pin
-    private void resizeLayout(boolean backToNormalSize){
+    private void resizeLayout(boolean backToNormalSize) {
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) circleFrameLayout.getLayoutParams();
 
         ViewTreeObserver vto = circleFrameLayout.getViewTreeObserver();
@@ -208,6 +217,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (!TextUtils.isEmpty(type) && type.contentEquals("single_bloodgroup")) {
                 String bgroup = getIntent().getStringExtra("bgroup");
                 AppConstants.LoadBloodDonorsByBloodGroup(mMap, bgroup);
+                hideShowCircleMarker();
             }
         }
 
@@ -231,7 +241,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 if (type.contentEquals("nearby_bloodbank")) {
                                     if (mLocation != null) {
                                         AppConstants.NearBy(MapsActivity.this, mMap, mService, mLocation.getLatitude(), mLocation.getLongitude(), "bloodbank");
+                                        hideShowCircleMarker();
                                         isNearByFired = true;
+                                        isNearByBloodBank = true;
                                     }
                                 } else if (type.contentEquals("nearby_donor")) {
                                     if (mLocation != null) {
@@ -288,7 +300,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             DonorDuplicateKey = key;
                             DonorKeys.add(key);
 
-                            if (!isFound){
+                            if (!isFound) {
                                 hideShowCircleMarker();
                                 isFound = true;
                             }
@@ -328,7 +340,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (RADIUS <= 2) {
                     Log.e("NearBy", "onGeoQueryReady - Radius:" + RADIUS);
                     NearByDonors(mMap, latitude, longitude);
-                }else {
+                } else {
                 }
             }
 
@@ -344,6 +356,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onMarkerClick(Marker marker) {
         Log.e("NearBy", "onMarkerClick - Key =======================> " + marker.getTag());
+        String title = marker.getTitle();
+        if (!marker.getTitle().contentEquals("My Location")){
+            if (!isNearByBloodBank)
+            marker.setTitle("Donor");
+        }
         DatabaseReference DonorDatabaseRefrence = FirebaseDatabase.getInstance().getReference("Donor");
         DonorDatabaseRefrence.addValueEventListener(new ValueEventListener() {
             @Override
@@ -351,7 +368,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (dataSnapshot.exists()) {
                     if (dataSnapshot.getValue() != null) {
                         for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                            if (snap.getKey().contentEquals(marker.getTitle())) {
+                            if (snap.getKey().contentEquals(title)) {
                                 Map map = (HashMap) snap.getValue();
                                 String age = map.get("age").toString();
                                 String bgroup = map.get("bgroup").toString();
@@ -374,6 +391,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+
         return false;
     }
 
@@ -407,22 +425,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.sms) {
-            if (!TextUtils.isEmpty(phone)) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", phone, null)));
+            if (AppConstants.isUserLogin(MapsActivity.this)) {
+                if (!TextUtils.isEmpty(phone)) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", phone, null)));
+                } else {
+                    Toast.makeText(MapsActivity.this, "Mobile number not found.", Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(MapsActivity.this, "Mobile number not found.", Toast.LENGTH_SHORT).show();
+                showAlertDialog();
             }
         } else if (view.getId() == R.id.call) {
-            if (!TextUtils.isEmpty(phone)) {
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:" + phone));
-                startActivity(intent);
+            if (AppConstants.isUserLogin(MapsActivity.this)) {
+                if (!TextUtils.isEmpty(phone)) {
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:" + phone));
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(MapsActivity.this, "Mobile number not found.", Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(MapsActivity.this, "Mobile number not found.", Toast.LENGTH_SHORT).show();
+                showAlertDialog();
             }
         } else if (view.getId() == R.id.profile_back) {
             dialog.hide();
         }
+    }
+
+    public void showAlertDialog() {
+        SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                .setTitleText("Want to contact?")
+                .setContentText("Please login first then contact")
+                .setConfirmText("Login")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        sDialog.dismissWithAnimation();
+                        Intent intent = new Intent(MapsActivity.this, RegistrationMenu.class);
+                        intent.putExtra("contact","contact");
+                        startActivity(intent);
+                    }
+                });
+        sweetAlertDialog.show();
     }
 
 

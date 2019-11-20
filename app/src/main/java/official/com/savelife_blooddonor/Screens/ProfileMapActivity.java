@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +65,7 @@ public class ProfileMapActivity extends FragmentActivity implements OnMapReadyCa
     BottomSheetDialog locationBottomSheet;
     TextView tvLat,tvLon,tvAddress;
     Button done;
+    FrameLayout pinViewLine,pinViewCircle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,11 @@ public class ProfileMapActivity extends FragmentActivity implements OnMapReadyCa
         tvAddress = (TextView) locationBottomSheet.findViewById(R.id.selected_location_bottom_sheet_address);
         done = (Button) locationBottomSheet.findViewById(R.id.selected_location_bottom_sheet_done);
         done.setOnClickListener(this);
+
+        pinViewLine = (FrameLayout) findViewById(R.id.pin_view_line);
+        pinViewCircle = (FrameLayout) findViewById(R.id.pin_view_circle);
+        pinViewCircle.setVisibility(View.GONE);
+        pinViewLine.setVisibility(View.GONE);
 
     }
 

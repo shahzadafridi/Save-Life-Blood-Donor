@@ -49,6 +49,8 @@ public class PhoneAuthenticator extends PhoneAuthProvider.OnVerificationStateCha
     String TAG = "PhoneAuthenticator";
     boolean isDoneeExists = false, isDonorExists = false;
 
+
+
     public PhoneAuthenticator(Context context, OtpTextView otpTextView, TextView message, ProgressBar progressBar, RelativeLayout optSendLayout, LinearLayout optVerificationLayout, String str_phone, String role, String requester_status) {
         this.context = context;
         this.otpTextView = otpTextView;
@@ -68,6 +70,18 @@ public class PhoneAuthenticator extends PhoneAuthProvider.OnVerificationStateCha
             progressBar.setVisibility(View.GONE);
 //            otpTextView.setOTP(code);
 //            verifyVerificationCode(code);
+        }else {
+//            Handler handler = new Handler();
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    if (role.contentEquals("donor")) {
+//                        checkDonorExists(phone);
+//                    } else if (role.contentEquals("donee")) {
+//                        checkDoneeExists(phone);
+//                    }
+//                }
+//            }, 3000);
         }
     }
 

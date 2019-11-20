@@ -62,7 +62,7 @@ public class RequestActivity extends AppCompatActivity {
             getDoneeRequest(str_phone);
             add.setVisibility(View.VISIBLE);
         } else {
-            getRequest(str_phone);
+            getRequest();
             add.setVisibility(View.INVISIBLE);
         }
     }
@@ -128,7 +128,7 @@ public class RequestActivity extends AppCompatActivity {
         });
     }
 
-    private void getRequest(String str_phone) {
+    private void getRequest() {
 
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference().child("Request");
         rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -137,28 +137,20 @@ public class RequestActivity extends AppCompatActivity {
                 if (snapshot.exists() && snapshot.getValue() != null) {
                     for (DataSnapshot snap : snapshot.getChildren()) {
                         Map snap_info = (Map) snap.getValue();
-                        if (snap_info.get("phone") != null) {
-                            String fphone = snap_info.get("phone").toString();
-                            if (fphone.contentEquals(str_phone)) {
-                                String name = snap_info.get("name").toString();
-                                String message = snap_info.get("message").toString();
-                                String phone = snap_info.get("phone").toString();
-                                String address = snap_info.get("address").toString();
-                                String bgroup = snap_info.get("bgroup").toString();
-                                String latitude = snap_info.get("latitude").toString();
-                                String longtitude = snap_info.get("longtitude").toString();
-                                Double lat = Double.parseDouble(latitude);
-                                Double lon = Double.parseDouble(longtitude);
-                                Location location = new Location(name);
-                                location.setLatitude(lat);
-                                location.setLongitude(lon);
-                                requests.add(new Request(snap.getKey(), name, message, bgroup, address, phone, location));
-                                Log.e(TAG, "name: " + name + " , message: " + message + " , phone: " + phone + " , address: " + address + " , bgroup: " + bgroup + " , latitude: " + latitude + " , longtitude: " + longtitude);
-                            }
-
-                        } else {
-                            Toast.makeText(RequestActivity.this, "No Request posted yet", Toast.LENGTH_SHORT).show();
-                        }
+                        String name = snap_info.get("name").toString();
+                        String message = snap_info.get("message").toString();
+                        String phone = snap_info.get("phone").toString();
+                        String address = snap_info.get("address").toString();
+                        String bgroup = snap_info.get("bgroup").toString();
+                        String latitude = snap_info.get("latitude").toString();
+                        String longtitude = snap_info.get("longtitude").toString();
+                        Double lat = Double.parseDouble(latitude);
+                        Double lon = Double.parseDouble(longtitude);
+                        Location location = new Location(name);
+                        location.setLatitude(lat);
+                        location.setLongitude(lon);
+                        requests.add(new Request(snap.getKey(), name, message, bgroup, address, phone, location));
+                        Log.e(TAG, "name: " + name + " , message: " + message + " , phone: " + phone + " , address: " + address + " , bgroup: " + bgroup + " , latitude: " + latitude + " , longtitude: " + longtitude);
                     }
 
                     updateAdapter();
@@ -177,6 +169,10 @@ public class RequestActivity extends AppCompatActivity {
 
     private void updateAdapter() {
         progressBar.setVisibility(View.INVISIBLE);
-        requestAdapter.setRequestList(requests);
+        if (requests.size() > 0) {
+            requestAdapter.setRequestList(requests);
+        }else {
+            Toast.makeText(RequestActivity.this, "No Request posted yet", Toast.LENGTH_SHORT).show();
+        }
     }
 }

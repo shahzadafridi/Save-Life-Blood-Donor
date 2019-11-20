@@ -121,7 +121,7 @@
                         android:indeterminate="true"
                         android:indeterminateTint="@color/white"
                         android:indeterminateTintMode="src_atop"
-                        android:visibility="invisible" />
+                        android:visibility="visible" />
 
                 </RelativeLayout>
 

@@ -99,7 +99,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
 
             if (v.getId() == R.id.request_contact) {
 
-                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                if (AppConstants.isUserLogin(context)) {
                     if (AppConstants.checkPhonePermission(context)) {
                         Intent intent = new Intent(Intent.ACTION_CALL);
                         intent.setData(Uri.parse("tel:" + request.getPhone()));

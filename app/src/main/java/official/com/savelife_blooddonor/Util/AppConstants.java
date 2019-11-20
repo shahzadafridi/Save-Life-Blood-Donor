@@ -182,8 +182,8 @@ public class AppConstants {
                             Double longtitude = Double.parseDouble(snap_info.get("longtitude").toString());
                             Marker marker = mMap.addMarker(new MarkerOptions()
                                     .position(new LatLng(latitude, longtitude))
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.blood_bank))
-                                    .title("Donor"));
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.donor_icon))
+                                    .title(snap_info.get("phone").toString()));
                         }
                     }
                 }
@@ -338,6 +338,11 @@ public class AppConstants {
     public static SharedPreferences.Editor getSharedPrefEditor(Context context, String name){
         SharedPreferences.Editor editor = getSharedPref(context,name).edit();
         return editor;
+    }
+
+    public static boolean isUserLogin(Context context){
+        boolean isUserLogin = getSharedPref(context, "SESSION").getBoolean("isLogin",false);
+        return isUserLogin;
     }
 
     public static String getRole(Context context, String name){
