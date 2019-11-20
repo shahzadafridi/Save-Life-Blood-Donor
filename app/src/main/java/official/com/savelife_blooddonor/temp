@@ -1,0 +1,134 @@
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback
+{
+
+  private GoogleMap mGoogleMap;
+  private FrameLayout frameLayout, circleFrameLayout;
+  private ProgressBar progress;
+  private TextView textView;
+  private int circleRadius;
+  private boolean isMoving = false;
+  private SupportMapFragment mapFragment;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_maps);
+    initViews();
+  }
+
+  private void initViews() {
+
+    frameLayout = (FrameLayout) findViewById(R.id.map_container);
+
+    circleFrameLayout = (FrameLayout) frameLayout.findViewById(R.id.pin_view_circle);
+    textView = (TextView) circleFrameLayout.findViewById(R.id.textView);
+    progress = (ProgressBar) circleFrameLayout.findViewById(R.id.profile_loader);
+
+    mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+    mapFragment.getMapAsync(this);
+
+}
+
+  private void moveMapCamera() {
+    if (mGoogleMap == null) {
+        return;
+    }
+
+    CameraUpdate center = CameraUpdateFactory
+            .newLatLng(new LatLng(40.76793169992044, -73.98180484771729));
+    CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+
+    mGoogleMap.moveCamera(center);
+    mGoogleMap.animateCamera(zoom);
+}
+
+  @Override
+  public void onMapReady(GoogleMap googleMap) {
+    mGoogleMap = googleMap;
+
+    mGoogleMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener() {
+
+        /* User starts moving map - change your pin's image here
+        */
+        @Override
+        public void onCameraMoveStarted(int i) {
+            isMoving = true;
+            textView.setVisibility(View.GONE);
+            progress.setVisibility(View.GONE);
+            Drawable mDrawable;
+            if (Build.VERSION.SDK_INT >= 21)
+                mDrawable = getApplicationContext().getResources().getDrawable(R.drawable.circle_background_moving, null);
+            else
+                mDrawable = getApplicationContext().getResources().getDrawable(R.drawable.circle_background_moving);
+
+            circleFrameLayout.setBackground(mDrawable);
+            resizeLayout(false);
+        }
+    });
+
+    /*User stoped moving map -> retrieve location and do your background task */
+    mGoogleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+        @Override
+        public void onCameraIdle() {
+
+            isMoving = false;
+            textView.setVisibility(View.INVISIBLE);
+            progress.setVisibility(View.VISIBLE);
+            resizeLayout(true);
+
+            /* this is just an example that simulates data loading
+               you shoud substitute it with your logic
+            */
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+
+                    Drawable mDrawable;
+                    if (Build.VERSION.SDK_INT >= 21)
+                        mDrawable = getApplicationContext().getResources().getDrawable(R.drawable.circle_background, null);
+                    else
+                        mDrawable = getApplicationContext().getResources().getDrawable(R.drawable.circle_background);
+
+                    if (!isMoving) {
+                        circleFrameLayout.setBackground(mDrawable);
+                        textView.setVisibility(View.VISIBLE);
+                        progress.setVisibility(View.GONE);
+                    }
+                }
+            }, 1500);
+        }
+    });
+
+    MapsInitializer.initialize(this);
+    moveMapCamera();
+  }
+
+  //resing circle pin
+  private void resizeLayout(boolean backToNormalSize){
+    FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) circleFrameLayout.getLayoutParams();
+
+    ViewTreeObserver vto = circleFrameLayout.getViewTreeObserver();
+    vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            circleFrameLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            circleRadius = circleFrameLayout.getMeasuredWidth();
+        }
+    });
+
+    if (backToNormalSize) {
+        params.width = WRAP_CONTENT;
+        params.height = WRAP_CONTENT;
+        params.topMargin = 0;
+
+    } else {
+        params.topMargin = (int) (circleRadius * 0.3);
+        params.height = circleRadius - circleRadius / 3;
+        params.width = circleRadius - circleRadius / 3;
+    }
+
+    circleFrameLayout.setLayoutParams(params);
+  }
+
+}
