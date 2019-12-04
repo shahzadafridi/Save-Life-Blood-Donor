@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="16dp"
+    tools:context=".Screens.ComplainScreen">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Complain Box"
+        android:textSize="22dp"
+        android:layout_marginTop="32dp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/montserrat_semibold"
+        android:gravity="center_horizontal"/>
+
+    <EditText
+        android:id="@+id/complain_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/editxt_bg"
+        android:layout_marginTop="32dp"
+        android:hint="Name"
+        android:inputType="text"
+        android:padding="12dp" />
+
+    <EditText
+        android:id="@+id/complain_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/editxt_bg"
+        android:hint="Phone"
+        android:inputType="text"
+        android:padding="12dp" />
+
+    <EditText
+        android:id="@+id/complain_message"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/editxt_bg"
+        android:inputType="textMultiLine"
+        android:gravity="top|left"
+        android:hint="Message"
+        android:lines="10"
+        android:padding="12dp"
+        android:scrollbars="vertical" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="16dp">
+
+        <Button
+            android:id="@+id/complain_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@drawable/red_btn_bg"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Send"
+            android:textColor="#fff"
+            android:textSize="18dp"
+            android:textStyle="normal" />
+
+        <ProgressBar
+            android:id="@+id/complain_progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/white"
+            android:indeterminateTintMode="src_atop"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
+</LinearLayout>

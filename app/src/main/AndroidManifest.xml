@@ -16,8 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme2"
         tools:replace="android:icon,android:allowBackup">
-        <activity android:name=".Screens.ProfileMapActivity"/>
-        <activity android:name=".Screens.ProfileActivity"></activity>
+        <activity android:name=".Screens.ComplainScreen"></activity>
+        <activity android:name=".Screens.ProfileMapActivity" />
+        <activity android:name=".Screens.ProfileActivity" />
         <activity android:name=".Screens.BloodRequest.EditRequest" />
         <activity android:name=".Admin.AdminMainActivity" />
         <activity android:name=".Screens.BloodRequest.RequestActivity" />

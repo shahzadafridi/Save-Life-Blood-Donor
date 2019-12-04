@@ -111,55 +111,59 @@ public class PhoneAuthentication extends AppCompatActivity implements View.OnCli
                         phone.setError("Invalid phone number.");
                     }
                 }
-            }else {
+            } else {
                 progressBar.setVisibility(View.VISIBLE);
-                if (login_type.contentEquals("donor")){
+                if (login_type.contentEquals("donor")) {
                     String str_phone = phone.getText().toString();
                     if (TextUtils.isEmpty(str_phone)) {
                         phone.setError("Enter phone number");
                     } else {
                         checkDonorExists(str_phone);
                     }
-                }else {
-                    String str_phone = phone.getText().toString();
-                    if (TextUtils.isEmpty(str_phone)) {
-                        phone.setError("Enter phone number");
-                    } else {
-                        checkDoneeExists(str_phone);
-                    }
+                } else {
+//                    String str_phone = phone.getText().toString();
+//                    if (TextUtils.isEmpty(str_phone)) {
+//                        phone.setError("Enter phone number");
+//                    } else {
+//                        checkDoneeExists(str_phone);
+//                    }
                 }
             }
         } else if (view.getId() == R.id.resend_otp) {
             String str_phone = phone.getText().toString();
-            onRsendVerifyVerificationCode( str_phone);
+            onRsendVerifyVerificationCode(str_phone);
         }
     }
 
     private void checkDoneeExists(String str_phone) {
-        AppConstants.getSharedPrefEditor(PhoneAuthentication.this, "SESSION")
-                .putBoolean("isLogin", true)
-                .putString("role", "donee")
-                .putString("phone", str_phone)
-                .commit();
-
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference().child("Donee");
         rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.exists() && snapshot.getValue() != null) {
                     if (snapshot.hasChild(str_phone)) {
+                        AppConstants.getSharedPrefEditor(PhoneAuthentication.this, "SESSION")
+                                .putBoolean("isLogin", true)
+                                .putString("role", "donee")
+                                .putString("phone", str_phone)
+                                .commit();
                         Log.e(TAG, "Donee exists");
                         progressBar.setVisibility(View.INVISIBLE);
                         Intent intent;
                         intent = new Intent(PhoneAuthentication.this, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
-                    }else {
-                        Toast.makeText(PhoneAuthentication.this,"User not exists",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(PhoneAuthentication.this, "User not exists", Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "Donee not exists");
                         progressBar.setVisibility(View.INVISIBLE);
 
                     }
+                }else {
+                    Toast.makeText(PhoneAuthentication.this, "User not exists", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Donee not exists");
+                    progressBar.setVisibility(View.INVISIBLE);
+
                 }
             }
 
@@ -171,11 +175,6 @@ public class PhoneAuthentication extends AppCompatActivity implements View.OnCli
     }
 
     private void checkDonorExists(String str_phone) {
-        AppConstants.getSharedPrefEditor(PhoneAuthentication.this, "SESSION")
-                .putBoolean("isLogin", true)
-                .putString("role", "donor")
-                .putString("phone", str_phone)
-                .commit();
 
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference().child("Donor");
         rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -183,17 +182,25 @@ public class PhoneAuthentication extends AppCompatActivity implements View.OnCli
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.exists() && snapshot.getValue() != null) {
                     if (snapshot.hasChild(str_phone)) {
+                        AppConstants.getSharedPrefEditor(PhoneAuthentication.this, "SESSION")
+                                .putBoolean("isLogin", true)
+                                .putString("role", "donor")
+                                .putString("phone", str_phone)
+                                .commit();
                         Log.e(TAG, "Donor exists");
                         progressBar.setVisibility(View.INVISIBLE);
                         Intent intent;
                         intent = new Intent(PhoneAuthentication.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
+                    } else {
+                        checkDoneeExists(str_phone);
                     }
                 } else {
-                    Toast.makeText(PhoneAuthentication.this,"User not exists",Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Donor not exists");
-                    progressBar.setVisibility(View.INVISIBLE);
+                    checkDoneeExists(str_phone);
+//                    Toast.makeText(PhoneAuthentication.this,"User not exists",Toast.LENGTH_SHORT).show();
+//                    Log.e(TAG, "Donor not exists");
+//                    progressBar.setVisibility(View.INVISIBLE);
 
                 }
             }

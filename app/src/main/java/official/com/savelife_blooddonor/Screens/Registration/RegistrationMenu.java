@@ -47,7 +47,10 @@ public class RegistrationMenu extends AppCompatActivity implements View.OnClickL
             intent.putExtra("role", "donee");
             startActivity(intent);
         } else if (view.getId() == R.id.reg_menu_login) {
-            showBottomDialog();
+            Intent intent = new Intent(RegistrationMenu.this, PhoneAuthentication.class);
+            intent.putExtra("login_role", "donor");
+            startActivity(intent);
+//            showBottomDialog();
         }else if (view.getId() == R.id.login_type_donee_back){
             sheetDialog.dismiss();
         }else if (view.getId() == R.id.login_type_menu_donor){

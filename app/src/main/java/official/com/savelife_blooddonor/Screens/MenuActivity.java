@@ -22,7 +22,7 @@ import official.com.savelife_blooddonor.R;
 
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button nearByLoc, bloodGroup, nearByBBank,request;
+    Button nearByLoc, bloodGroup, nearByBBank,request,complain;
     Dialog dialog;
     TextView Aplus, Aneg, Bplus, Bneg, Oplus, Oneg, ABplus, ABneg;
     String str_blood_group = "O+"; // default blood group.
@@ -35,6 +35,8 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         bloodGroup = (Button) findViewById(R.id.menu_blood_group);
         nearByLoc = (Button) findViewById(R.id.menu_nearby_location);
         request = (Button) findViewById(R.id.menu_nearby_showRequest);
+        complain = (Button) findViewById(R.id.menu_complain);
+        complain.setOnClickListener(this);
         nearByBBank.setOnClickListener(this);
         bloodGroup.setOnClickListener(this);
         nearByLoc.setOnClickListener(this);
@@ -49,7 +51,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
                 nearByLoc.setVisibility(View.GONE);
                 request.setVisibility(View.VISIBLE);
             }else {
-                request.setVisibility(View.INVISIBLE);
+                request.setVisibility(View.GONE);
             }
         }
     }
@@ -119,6 +121,9 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             setSelectedBackground(str_blood_group);
         }else if (view.getId() == R.id.menu_nearby_showRequest){
             Intent intent = new Intent(MenuActivity.this, RequestActivity.class);
+            startActivity(intent);
+        }else if (view.getId() == R.id.menu_complain){
+            Intent intent = new Intent(MenuActivity.this, ComplainScreen.class);
             startActivity(intent);
         }
     }
