@@ -53,7 +53,12 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             }else {
                 request.setVisibility(View.GONE);
             }
+
+            complain.setVisibility(View.VISIBLE);
+        }else {
+            complain.setVisibility(View.GONE);
         }
+
     }
 
     public void IntializeDialog(){

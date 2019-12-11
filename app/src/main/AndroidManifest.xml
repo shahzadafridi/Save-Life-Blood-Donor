@@ -16,11 +16,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme2"
         tools:replace="android:icon,android:allowBackup">
-        <activity android:name=".Screens.ComplainScreen"></activity>
+        <activity android:name=".Screens.Admin.AdminComplainActivity"></activity>
+        <activity android:name=".Screens.Admin.AdminBReqeustActivity" />
+        <activity android:name=".Screens.Admin.AdminDoneeActivity" />
+        <activity android:name=".Screens.Admin.AdminDonorActivity" />
+        <activity android:name=".Screens.Admin.AdminLoginActivity">
+        </activity>
+        <activity android:name=".Screens.Admin.AdminActivity"/>
+        <activity android:name=".Screens.ComplainScreen" />
         <activity android:name=".Screens.ProfileMapActivity" />
         <activity android:name=".Screens.ProfileActivity" />
         <activity android:name=".Screens.BloodRequest.EditRequest" />
-        <activity android:name=".Admin.AdminMainActivity" />
         <activity android:name=".Screens.BloodRequest.RequestActivity" />
         <activity android:name=".Screens.BloodRequest.PostRequestActivity">
             <intent-filter>
@@ -59,7 +65,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.Default" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
@@ -68,7 +74,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
